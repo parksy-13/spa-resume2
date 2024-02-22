@@ -9,7 +9,25 @@ export class ResumesController {
     }
 
     /* 이력서 생성 API */
+    createResume = async (req, res, next) => {
+        try {
+            const { title, content } = req.body;
+            const { userId, name } = req.user;
 
+            if (!title) {
+                return res.status(400).json({ message: '제목을 작성하세요.' })
+            }
+            if (!content) {
+                return res.status(400).json({ message: '내용을 작성하세요.' })
+            }
+
+            const resume = await this.resumesService.createResume({userId, name, title, content});
+
+            return res.status(201).json({ data: resume });
+        } catch (err) {
+            next(err);
+        }
+    }
 
     /* 이력서 전체 조회 API */
     getResumes = async (req, res, next) => {
@@ -26,7 +44,7 @@ export class ResumesController {
                 return res.status(400).json({ message: '정렬 순서를 asc나 desc 중 하나를 작성하세요' });
             }
 
-            const resumes = await this.resumesService.findAllResumes(orderValue);
+            const resumes = await this.resumesService.findAllResumes({ orderKey, orderValue });
             return res.status(200).json({ data: resumes });
         } catch (err) {
             next(err);
@@ -51,7 +69,6 @@ export class ResumesController {
     /* 이력서 수정 API */
     updateResume = async (req, res, next) => {
         try {
-            authMiddleware;
             const updatedData = req.body;
             const { userId } = req.user;
             const resumeId = req.params.resumeId;
