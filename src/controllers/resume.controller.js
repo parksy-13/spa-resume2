@@ -1,8 +1,3 @@
-import express from 'express';
-import { prisma } from '../../config/index.js';
-import authMiddleware from '../middlewares/auth.middleware.js';
-import { Prisma } from '@prisma/client'
-
 export class ResumesController {
     constructor(resumesService) {
         this.resumesService = resumesService
@@ -93,7 +88,6 @@ export class ResumesController {
     /* 이력서 삭제 API */
     deleteResume = async (req, res, next) => {
         try {
-            authMiddleware;
             const { userId } = req.user;
             const resumeId = req.params.resumeId;
 

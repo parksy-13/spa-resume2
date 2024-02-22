@@ -1,15 +1,9 @@
 import express from 'express';
 import {prisma} from '../../config/index.js';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import authMiddleware from '../middlewares/auth.middleware.js';
-import { Prisma } from '@prisma/client';
-import dotenv from 'dotenv';
 import {UsersController} from '../controllers/user.controller.js';
 import {UsersService} from '../services/user.service.js';
 import {UsersRepository} from '../repositories/user.repository.js';
-
-dotenv.config();
 
 const router = express.Router();
 
