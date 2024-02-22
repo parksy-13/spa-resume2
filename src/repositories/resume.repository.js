@@ -1,4 +1,5 @@
 import authMiddleware from '../middlewares/auth.middleware.js';
+import dataSource from '../typeorm/index.js';
 
 export class ResumesRepository {
     constructor(prisma) {
@@ -6,7 +7,7 @@ export class ResumesRepository {
     };
 
     findAllResumes = async (sort) => {
-        const resumes = await this.prisma.resumes.findMany({
+        const resumes = await dataSource.getRepository('Resumes').find({
             select: {
                 resumeId: true,
                 userId: true,
@@ -16,16 +17,15 @@ export class ResumesRepository {
                 status: true,
                 createdAt: true
             },
-            orderBy:
+            order:
                 { [sort.orderKey]: sort.orderValue }
-
         });
 
         return resumes;
     }
 
     findByResumeId = async (resumeId) => {
-        const resume = await this.prisma.resumes.findFirst({
+        const resume = await dataSource.getRepository('Resumes').findOne({
             where: { resumeId: +resumeId },
             select: {
                 resumeId: true,
@@ -36,13 +36,12 @@ export class ResumesRepository {
                 status: true,
                 createdAt: true
             }
-        });
-
+        })
         return resume;
     }
 
     createResume = async (data) => {
-        const resume = await this.prisma.resumes.create({data});
+        const resume = await this.prisma.resumes.create(data);
 
         return resume;
     }

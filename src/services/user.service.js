@@ -46,7 +46,7 @@ export class UsersService {
   }
 
   signInUser = async (email, password) => {
-    const user = await this.usersService.findUserByEmail(email);
+    const user = await this.usersRepository.findUserByEmail(email);
 
     if (!user) {
       throw new Error("존재하지 않는 이메일입니다.")
