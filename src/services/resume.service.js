@@ -16,18 +16,26 @@ export class ResumesService {
 
     createResume = async ({ userId, name, title, content }) => {
         const resume = await this.resumesRepository.createResume({
-            data: {
-                userId,
-                name: name,
-                title,
-                content,
-                status: 'APPLY'
-            }
+            userId,
+            name: name,
+            title,
+            content,
+            status: 'APPLY'
         });
         return resume;
     }
 
-    updateResume = async (resumeId, updatedData) => {
+    updateResume = async (resumeId, updatedData, userId) => {
+        const userResume = await this.resumesRepository.findByResumeId(resumeId);
+
+        if (!userResume) {
+            throw { code: 404, message: '이력서 조회에 실패하였습니다.' }
+        }
+
+        if (userResume.userId !== userId) {
+            throw { code: 400, message: '본인의 이력서를 수정해야합니다.' }
+        }
+
         await this.resumesRepository.updateResume(resumeId, updatedData);
 
         const updatedResume = await this.resumesRepository.findByResumeId(resumeId);
@@ -35,8 +43,17 @@ export class ResumesService {
         return updatedResume;
     }
 
-    deleteResume = async (resumeId) => {
+    deleteResume = async (resumeId, userId) => {
         const resume = await this.resumesRepository.findByResumeId(resumeId);
+
+        if (!resume) {
+            throw { code: 404, message: '이력서 조회에 실패하였습니다.' }
+        }
+
+        if (userId !== resume.userId) {
+            throw { code: 400, message: '본인의 이력서만 삭제할 수 있습니다.' }
+        }
+
         await this.resumesRepository.deleteResume(resumeId);
 
         return {

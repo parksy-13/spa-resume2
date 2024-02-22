@@ -18,7 +18,7 @@ export class ResumesController {
 
             const resume = await this.resumesService.createResume({userId, name, title, content});
 
-            return res.status(201).json({ data: resume });
+            return res.status(201).json({message: "이력서가 작성되었습니다." });
         } catch (err) {
             next(err);
         }
@@ -67,18 +67,10 @@ export class ResumesController {
             const updatedData = req.body;
             const { userId } = req.user;
             const resumeId = req.params.resumeId;
-
-            const userResume = await this.resumesService.findByResumeId(resumeId);
-
-            if (!userResume) return res.status(404).json({ message: '이력서 조회에 실패하였습니다.' });
-
-            if (userResume.userId !== userId) {
-                return res.status(400).json({ message: '본인의 이력서를 수정해야합니다.' })
-            }
-
+            
             if (!updatedData) return res.status(400).json({ message: '수정할 내용이 작성되지 않았습니다.' });
 
-            await this.resumesService.updateResume(resumeId, updatedData);
+            await this.resumesService.updateResume(resumeId, updatedData, userId);
             return res.status(200).json({ message: '이력서 수정에 성공하였습니다.' });
         } catch (err) {
             next(err);
@@ -91,15 +83,7 @@ export class ResumesController {
             const { userId } = req.user;
             const resumeId = req.params.resumeId;
 
-            const userResume = await this.resumesService.findByResumeId(resumeId);
-
-            if (!userResume) return res.status(404).json({ message: '이력서 조회에 실패하였습니다.' });
-
-            if (userId !== userResume.userId) {
-                return res.status(401).json({ message: '본인의 이력서만 삭제할 수 있습니다.' });
-            }
-
-            await this.resumesService.deleteResume(resumeId);
+            await this.resumesService.deleteResume(resumeId, userId);
             return res.status(200).json({ message: '이력서 삭제에 성공하였습니다.' });
         } catch (err) {
             next(err);

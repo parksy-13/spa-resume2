@@ -1,11 +1,6 @@
-import authMiddleware from '../middlewares/auth.middleware.js';
 import dataSource from '../typeorm/index.js';
 
 export class ResumesRepository {
-    constructor(prisma) {
-        this.prisma = prisma;
-    };
-
     findAllResumes = async (sort) => {
         const resumes = await dataSource.getRepository('Resumes').find({
             select: {
@@ -41,27 +36,21 @@ export class ResumesRepository {
     }
 
     createResume = async (data) => {
-        const resume = await this.prisma.resumes.create(data);
+        const resume = await dataSource.getRepository('Resumes').insert(data);
 
         return resume;
     }
 
 
     updateResume = async (resumeId, updatedData) => {
-        const updatedResume = await this.prisma.resumes.update({
-            where: { resumeId: +resumeId },
-            data: {
-                ...updatedData
-            }
-        })
+        const updatedResume = await dataSource.getRepository('Resumes').update(
+             {resumeId: +resumeId} , updatedData)
 
         return updatedResume;
     }
 
     deleteResume = async (resumeId) => {
-        const deletedResume = await this.prisma.resumes.delete({
-            where: { resumeId: +resumeId }
-        });
+        const deletedResume = await dataSource.getRepository('Resumes').delete({ resumeId: +resumeId });
 
         return deletedResume;
     }

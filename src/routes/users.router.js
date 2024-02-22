@@ -1,5 +1,4 @@
 import express from 'express';
-import {prisma} from '../../config/index.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 import {UsersController} from '../controllers/user.controller.js';
 import {UsersService} from '../services/user.service.js';
@@ -7,7 +6,7 @@ import {UsersRepository} from '../repositories/user.repository.js';
 
 const router = express.Router();
 
-const usersRepository = new UsersRepository(prisma);
+const usersRepository = new UsersRepository();
 const usersService = new UsersService(usersRepository);
 const usersController = new UsersController(usersService);
 

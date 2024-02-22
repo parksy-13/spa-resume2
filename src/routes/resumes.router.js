@@ -1,12 +1,11 @@
 import express from 'express';
-import { prisma } from '../../config/index.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 import {ResumesController} from '../controllers/resume.controller.js';
 import {ResumesService} from '../services/resume.service.js';
 import {ResumesRepository} from '../repositories/resume.repository.js';
 
 const router = express.Router();
-const resumesRepository = new ResumesRepository(prisma);
+const resumesRepository = new ResumesRepository();
 const resumesService = new ResumesService(resumesRepository);
 const resumesController = new ResumesController(resumesService);
 

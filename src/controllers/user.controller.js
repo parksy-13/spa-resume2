@@ -26,11 +26,6 @@ export class UsersController {
             if (!name) {
                 throw new Error("이름은 필수값입니다.")
             }
-            const isExistUser = await this.usersService.findUserByEmail(email)
-
-            if (isExistUser) {
-                throw new Error("이미 존재하는 이메일입니다.")
-            }
 
             if (password.length < 6) {
                 throw new Error("비밀번호는 6자리 이상이어야합니다.")

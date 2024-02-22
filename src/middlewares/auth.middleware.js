@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { prisma } from '../../config/index.js';
+import dataSource from '../typeorm/index.js';
 
 export default async function (req, res, next) {
     try {
@@ -16,20 +17,24 @@ export default async function (req, res, next) {
         /*token에서 id 가져오기*/
         const userId = decodedToken.userId;
 
-        const userCheck = await prisma.users.findFirst({
+        // const userCheck = await prisma.users.findFirst({
+        //     where: { userId: +userId }
+        // });
+
+        const userCheck = await dataSource.getRepository('Users').findOne({
             where: { userId: +userId }
-        });
+        })
         if (!userCheck) throw new Error('로그인이 필요합니다.');
 
         req.user = userCheck;
 
         next();
     } catch (error) {
-        if(error.name==='TokenExpiredError'){
-            return res.status(401).json({message:'토큰이 만료되었습니다.'});
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: '토큰이 만료되었습니다.' });
         }
-        if(error.name === 'JsonWebTokenError'){
-            return res.status(401).json({message: '토큰이 조작되었습니다.'});
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ message: '토큰이 조작되었습니다.' });
         }
         return res.status(400).json({ message: error.message });
     }
